@@ -8,8 +8,10 @@
 typedef struct
 {
     char *pregunta;
+    char *respuesta;
+    char *puntos;
 
-}preguntita;
+}datos_test;
 
 typedef struct
 {
@@ -77,10 +79,12 @@ int stringEqual(const void * key1, const void * key2) {
     return strcmp(A, B) == 0;
 }
 
-preguntita *crear_pregunta(char *linea)
+datos_test *crear_pregunta(char *preguntaR,char *respuestaR,char *punto)
 {
-    preguntita *nueva_pregunta = malloc(sizeof(preguntita));
-    strcpy(nueva_pregunta->pregunta,linea);
+    datos_test *nueva_pregunta = malloc(sizeof(datos_test));
+    nueva_pregunta->pregunta=preguntaR;
+    nueva_pregunta->respuesta=respuestaR;
+    nueva_pregunta->puntos=punto;
     return nueva_pregunta;
 
 }
@@ -90,7 +94,10 @@ void test_depresion(list *preguntas)
     FILE *entrada_preguntas = fopen("preguntas_depresion.csv","r");
 
     char *linea;
-    char respuestita[1000];
+    char *preguntaR;
+    char *respuestaR;
+    char *punto;
+    char respuesta_dada[1000];
 
     if (entrada_preguntas == NULL)
     {
@@ -100,27 +107,54 @@ void test_depresion(list *preguntas)
     linea = (char*) malloc(sizeof(char)*1024);
      while(fgets(linea,1024,entrada_preguntas) != NULL)
      {
-        preguntita *m = crear_pregunta(linea);
+        preguntaR = get_csv_field(linea, 1);
+        respuestaR = get_csv_field(linea, 2);
+        punto = (get_csv_field(linea, 3));
+        datos_test *m = crear_pregunta(preguntaR,respuestaR,punto);
         list_push_back(preguntas,m);
         linea = (char*) malloc(sizeof(char)*1024);
 
      }
-
-   preguntita *dato;
+    printf("Bienvenido al test de depresion (porfavor contestar si o no a cada pregunta)\n");
+    datos_test *dato;
     dato = list_first (preguntas);
-    //int puntaje = 0;
+    int puntaje = 0;
     while(dato != NULL)
     {
         printf("%s\n",dato->pregunta);
-        scanf("%s",respuestita);
-        /*if((strcmp("si",respuestita)==0))
+        while(1)
         {
-            puntaje = puntaje++;
+            scanf("%s",respuesta_dada);
+            if((strcmp(respuesta_dada,"NO")==0)||(strcmp(respuesta_dada,"no")==0)||(strcmp(respuesta_dada,"No")==0)||(strcmp(respuesta_dada,"SI")==0)||(strcmp(respuesta_dada,"si")==0)||(strcmp(respuesta_dada,"Si")==0))
+            {
+                break;
+            }
+            printf("respuesta no valida por favor vuelva a contestar\n");
         }
-        dato = list_next(preguntas);
-        */
-    }
 
+        if((strcmp("si",respuesta_dada)==0)&&(strcmp("1",dato->puntos)==0))
+        {
+            puntaje++;
+        }
+
+        dato = list_next(preguntas);
+    }
+    printf("es puntaje final es %d\n",puntaje);
+    if(puntaje >= 3)
+    {
+        printf("Tu test de depresion es negativo .... bla bla bla hay que inventar algo XD\n");
+    }
+    else
+    {
+        if (puntaje == 0)
+        {
+            printf("probablemente estes cursando una depresion y blalbla\n");
+        }
+        else
+        {
+            printf("bla bla (no esta cursando depresion) hay que inventar algo xD\n");
+        }
+    }
 }
 
 int main()
@@ -151,6 +185,7 @@ int main()
         if(op == 3)
         {
             test_depresion(preguntas);
+            printf("\n");
         }
 
         if(op == 4)
