@@ -15,17 +15,18 @@ typedef struct
 typedef struct
 {
     char *pregunta_vocacional;
-    list *Alternativas;
     char *area;
 
-}datos_vocacional;
+}datos_pregunta_vocacional;
+
 
 typedef struct
 {
-    char *texto;
-    char *puntaje;
+    char *carrera;
+    char *area_carrera;
+    list *listVocacional;
 
-}alternativa;
+}datos_vocacional;
 
 /*typedef struct
 {
@@ -86,6 +87,205 @@ datos_test *crear_pregunta(char *preguntaR,char *punto)
 
 }
 
+datos_pregunta_vocacional *crear_pregunta_vocacional(char *preguntaR,char *areaR)
+{
+    datos_pregunta_vocacional *nueva_pregunta = malloc(sizeof(datos_pregunta_vocacional));
+    nueva_pregunta->pregunta_vocacional=preguntaR;
+    nueva_pregunta->area=areaR;
+    return nueva_pregunta;
+}
+
+datos_vocacional *crear_vocacional(char *carreraR,char *area_carreraR)
+{
+    datos_vocacional *nueva_pregunta = malloc(sizeof(datos_vocacional));
+    nueva_pregunta->carrera=carreraR;
+    nueva_pregunta->area_carrera=area_carreraR;
+    return nueva_pregunta;
+}
+
+void test_vocacional(Map *mapVocacional,list *listVocacional)
+{
+    FILE *entrada_preguntas = fopen("preguntas_test_vocacional.csv","r");
+    char *linea;
+    char *preguntaR;
+    char *carreraR;
+    char *areaR;
+    char *area_carreraR;
+
+    list *lista_carreras = list_create_empty();
+
+    if (entrada_preguntas == NULL)
+    {
+        printf("Archivo no se pudo abrir :(");
+        exit(0);
+    }
+    linea = (char*) malloc(sizeof(char)*1024);
+    while(fgets(linea,1024,entrada_preguntas) != NULL)
+     {
+        preguntaR = get_csv_field(linea, 1);
+        areaR = get_csv_field(linea,3);
+        datos_pregunta_vocacional *m = crear_pregunta_vocacional(preguntaR,areaR);
+        list_push_back(listVocacional,m);
+        linea = (char*) malloc(sizeof(char)*1024);
+    }
+
+    FILE *entrada_carreras = fopen("carreras.csv","r");
+    if (entrada_carreras == NULL)
+    {
+        printf("Archivo no se pudo abrir :(");
+        exit(0);
+    }
+    char *linea2;
+    linea2 = (char*) malloc(sizeof(char)*1024);
+
+    while(fgets(linea2,1024,entrada_carreras) != NULL)
+     {
+        carreraR = get_csv_field(linea2,1);
+        area_carreraR = get_csv_field(linea2,2);
+        datos_vocacional *t = crear_pregunta_vocacional(carreraR,area_carreraR);
+        list_push_back(lista_carreras,t);
+        insertMap(mapVocacional,t->area_carrera,lista_carreras);
+        linea = (char*) malloc(sizeof(char)*1024);
+    }
+    /*
+        aqui se escribe la descripcion del test
+    */
+    char respuesta_dada[100];
+
+    int puntaje_ingenieria = 0;
+    int puntaje_salud = 0;
+    int puntaje_artes = 0;
+    int puntaje_cs = 0;
+
+    datos_pregunta_vocacional *datoR;
+    datoR =  list_first(listVocacional);
+    while(datoR != NULL)
+    {
+        printf("\nContestar con 'si' o 'no', por favor\n");
+        printf("--------------------------------------\n\n");
+        printf("%s\n",datoR->pregunta_vocacional);
+
+        while(1)
+        {
+            printf("\n");
+            getchar();
+            scanf("%[^\n]s",respuesta_dada);
+            if((strcmp(respuesta_dada,"NO")==0)||(strcmp(respuesta_dada,"no")==0)||(strcmp(respuesta_dada,"No")==0)||(strcmp(respuesta_dada,"SI")==0)||(strcmp(respuesta_dada,"si")==0)||(strcmp(respuesta_dada,"Si")==0))
+            {
+                break;
+            }
+            printf("\nRespuesta no valida, por favor vuelva a contestar\n");
+        }
+        system("cls");
+
+
+        if((strcmp("si",respuesta_dada)==0)&&(strcmp("ingenieria",datoR->area)==0)){
+            puntaje_ingenieria++;
+        }
+
+        if((strcmp("si",respuesta_dada)==0)&&(strcmp("salud",datoR->area)==0)){
+            puntaje_salud++;
+        }
+
+        if((strcmp("si",respuesta_dada)==0)&&(strcmp("artes",datoR->area)==0)){
+            puntaje_artes++;
+        }
+
+        if((strcmp("si",respuesta_dada)==0)&&(strcmp("cienciaSociales",datoR->area)==0)){
+            puntaje_cs++;
+        }
+
+        datoR = list_next(listVocacional);
+    }
+    printf("%d ",puntaje_artes);
+    printf("%d ",puntaje_ingenieria);
+    printf("%d ",puntaje_salud);
+    printf("%d \n",puntaje_cs);
+
+
+
+    if((puntaje_ingenieria>puntaje_salud)&&(puntaje_ingenieria>puntaje_artes)&&(puntaje_ingenieria>puntaje_cs))
+    {
+        char *clave;
+        clave = (char*) malloc(sizeof(char)*1024);
+        strcpy(clave,"ingenieria");
+        list *j = searchMap(mapVocacional,clave);
+        datos_vocacional *puntero = list_first(j);
+        while(puntero != NULL)
+        {
+            if(strcmp(clave,puntero->area_carrera)==0)
+            {
+                printf("%s\n",puntero->carrera);
+            }
+            puntero = list_next(j);
+
+        }
+        getch();
+
+    }
+    else
+    {
+        if((puntaje_salud>puntaje_ingenieria)&&(puntaje_salud>puntaje_artes)&&(puntaje_salud>puntaje_cs))
+        {
+                char *clave;
+                clave = (char*) malloc(sizeof(char)*1024);
+                strcpy(clave,"salud");
+                list *j = searchMap(mapVocacional,clave);
+                datos_vocacional *puntero = list_first(j);
+                while(puntero != NULL)
+                {
+                    if(strcmp(clave,puntero->area_carrera)==0)
+                    {
+                        printf("%s\n",puntero->carrera);
+                    }
+                    puntero = list_next(j);
+
+                }
+                getch();
+        }
+        else
+        {
+            if((puntaje_artes>puntaje_ingenieria)&&(puntaje_artes>puntaje_salud)&&(puntaje_artes>puntaje_cs))
+            {
+                    char *clave;
+                    clave = (char*) malloc(sizeof(char)*1024);
+                    strcpy(clave,"artes");
+                    list *j = searchMap(mapVocacional,clave);
+                    datos_vocacional *puntero = list_first(j);
+                    while(puntero != NULL)
+                    {
+                        if(strcmp(clave,puntero->area_carrera)==0)
+                        {
+                            printf("%s\n",puntero->carrera);
+                        }
+                        puntero = list_next(j);
+
+                    }
+            }
+            else
+            {
+                if((puntaje_cs>puntaje_ingenieria)&&(puntaje_cs>puntaje_salud)&&(puntaje_cs>puntaje_artes))
+                {
+                    char *clave;
+                    clave = (char*) malloc(sizeof(char)*1024);
+                    strcpy(clave,"cienciaSociales");
+                    list *j = searchMap(mapVocacional,clave);
+                    datos_vocacional *puntero = list_first(j);
+                    while(puntero != NULL)
+                    {
+                        if(strcmp(clave,puntero->area_carrera)==0)
+                        {
+                            printf("%s\n",puntero->carrera);
+                        }
+                        puntero = list_next(j);
+                    }
+                    getch();
+                }
+            }
+        }
+    }
+}
+
 void test_ansiedad(list *ListAnsiedad)
 {
     FILE *entrada_preguntas = fopen("preguntas_test_ansiedad.csv","r");
@@ -111,7 +311,7 @@ void test_ansiedad(list *ListAnsiedad)
     }
 
     system("cls");
-    printf("\n  -------------------------------------TEST ANSIEDAD-------------------------------------");
+    printf("\n  ---------------------------------------TEST ANSIEDAD---------------------------------------");
     printf("\n |                                                                                           |");
     printf("\n |   Sentir ansiedad de modo ocasional es una parte normal de la vida. Sin embargo, las      |");
     printf("\n |   personas con trastornos de ansiedad con frecuencia tienen preocupaciones y miedos       |");
@@ -120,7 +320,7 @@ void test_ansiedad(list *ListAnsiedad)
     printf("\n |   ansiedad intensa y miedo o terror que alcanzan un maximo en una cuestión de minutos     |");
     printf("\n |   (ataques de panico).                                                                    |");
     printf("\n |                                                                                           |");
-    printf("\n  --------------------------------------------------------------------------------------------");
+    printf("\n  -------------------------------------------------------------------------------------------");
     printf("\n\n Presione cualquier tecla para comenzar el test");
     getch();
     system("cls");
@@ -137,7 +337,8 @@ void test_ansiedad(list *ListAnsiedad)
         while(1)
         {
             printf("\n");
-            scanf("%s",respuesta_dada);
+            getchar();
+            scanf("%[^\n]s",respuesta_dada);
             if((strcmp(respuesta_dada,"NO")==0)||(strcmp(respuesta_dada,"no")==0)||(strcmp(respuesta_dada,"No")==0)||(strcmp(respuesta_dada,"SI")==0)||(strcmp(respuesta_dada,"si")==0)||(strcmp(respuesta_dada,"Si")==0))
             {
                 break;
@@ -258,7 +459,8 @@ void test_inteligencia(list *ListInteligenciaEmocional)
         while(1)
         {
             printf("\n");
-            scanf("%s",respuesta_dada);
+            getchar();
+            scanf("%[^\n]s",respuesta_dada);
             if((strcmp(respuesta_dada,"NO")==0)||(strcmp(respuesta_dada,"no")==0)||(strcmp(respuesta_dada,"No")==0)||(strcmp(respuesta_dada,"SI")==0)||(strcmp(respuesta_dada,"si")==0)||(strcmp(respuesta_dada,"Si")==0))
             {
                 break;
@@ -383,7 +585,8 @@ void test_depresion(list *ListDepresion)
         while(1)
         {
             printf("\n");
-            scanf("%s",respuesta_dada);
+            getchar();
+            scanf("%[^\n]s",respuesta_dada);
             if((strcmp(respuesta_dada,"NO")==0)||(strcmp(respuesta_dada,"no")==0)||(strcmp(respuesta_dada,"No")==0)||(strcmp(respuesta_dada,"SI")==0)||(strcmp(respuesta_dada,"si")==0)||(strcmp(respuesta_dada,"Si")==0))
             {
                 break;
@@ -475,7 +678,6 @@ void test_depresion(list *ListDepresion)
 
 int main(){
     int op;
-    //Map *resultado = createMap(stringHash,stringEqual);
 
     do
     {
@@ -493,10 +695,11 @@ int main(){
 
         if (op == 1)
         {
-            //list *ListVocacional = list_create_empty();
-            //system("cls");
-            //test_vocacional(preguntas);
-            //printf("\n");
+            list *listVocacional = list_create_empty();
+            Map *mapVocacional = createMap(stringHash,stringEqual);
+            system("cls");
+            test_vocacional(mapVocacional,listVocacional);
+            printf("\n");
         }
 
         if (op == 2)
