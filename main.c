@@ -123,7 +123,7 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
     while(fgets(linea,1024,entrada_preguntas) != NULL)
      {
         preguntaR = get_csv_field(linea, 1);
-        areaR = get_csv_field(linea,3);
+        areaR = get_csv_field(linea,2);
         datos_pregunta_vocacional *m = crear_pregunta_vocacional(preguntaR,areaR);
         list_push_back(listVocacional,m);
         linea = (char*) malloc(sizeof(char)*1024);
@@ -147,9 +147,20 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
         insertMap(mapVocacional,t->area_carrera,lista_carreras);
         linea = (char*) malloc(sizeof(char)*1024);
     }
-    /*
-        aqui se escribe la descripcion del test
-    */
+
+    printf("\n\n  ---------------------------------------TEST VOCACIONAL------------------------------------------ \n");
+    printf(" |                                                                                                |\n");
+    printf(" |  Sabemos lo importante que es decidir adecuadamente en esta materia. Una carrera no solo va    |\n");
+    printf(" |  a ser una gran inversion de dinero, tiempo y energia. Tambien va a ser lo que probablemente   |\n");
+    printf(" |  te vas a dedicar los proximos 50 años de tu vida. Esperamos poder ayudarte a que te sientas   |\n");
+    printf(" |  mas claro y puedas decidir con criterios mas especificos un area de interes que te represente |\n");
+    printf(" |  y te haga sentir satisfecho.                                                                  |\n");
+    printf(" |                                                                                                |\n");
+    printf("  ------------------------------------------------------------------------------------------------ ");
+    printf("\n\n Presione cualquier tecla para comenzar el test");
+    getch();
+    system("cls");
+
     char respuesta_dada[100];
 
     int puntaje_ingenieria = 0;
@@ -204,11 +215,46 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
 
 
 
-    if((puntaje_ingenieria>puntaje_salud)&&(puntaje_ingenieria>puntaje_artes)&&(puntaje_ingenieria>puntaje_cs))
+    if((puntaje_ingenieria>=puntaje_salud)&&(puntaje_ingenieria>=puntaje_artes)&&(puntaje_ingenieria>=puntaje_cs)&&(puntaje_ingenieria!=0))
     {
         char *clave;
         clave = (char*) malloc(sizeof(char)*1024);
         strcpy(clave,"ingenieria");
+        list *j = searchMap(mapVocacional,clave);
+        datos_vocacional *puntero = list_first(j);
+        while(puntero != NULL)
+        {
+            if(strcmp(clave,puntero->area_carrera)==0)
+            {
+                printf(" -%s\n",puntero->carrera);
+            }
+            puntero = list_next(j);
+
+        }
+    }
+
+    if((puntaje_salud>=puntaje_ingenieria)&&(puntaje_salud>=puntaje_artes)&&(puntaje_salud>=puntaje_cs)&&(puntaje_salud!=0))
+    {
+        char *clave;
+        clave = (char*) malloc(sizeof(char)*1024);
+        strcpy(clave,"salud");
+        list *j = searchMap(mapVocacional,clave);
+        datos_vocacional *puntero = list_first(j);
+        while(puntero != NULL)
+        {
+            if(strcmp(clave,puntero->area_carrera)==0)
+            {
+                printf("%s\n",puntero->carrera);
+            }
+            puntero = list_next(j);
+        }
+    }
+
+    if((puntaje_artes>=puntaje_ingenieria)&&(puntaje_artes>=puntaje_salud)&&(puntaje_artes>=puntaje_cs)&&(puntaje_artes!=0))
+    {
+        char *clave;
+        clave = (char*) malloc(sizeof(char)*1024);
+        strcpy(clave,"artes");
         list *j = searchMap(mapVocacional,clave);
         datos_vocacional *puntero = list_first(j);
         while(puntero != NULL)
@@ -220,70 +266,45 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
             puntero = list_next(j);
 
         }
-        getch();
-
     }
-    else
+
+    if((puntaje_cs>=puntaje_ingenieria)&&(puntaje_cs>=puntaje_salud)&&(puntaje_cs>=puntaje_artes)&&(puntaje_cs!=0))
     {
-        if((puntaje_salud>puntaje_ingenieria)&&(puntaje_salud>puntaje_artes)&&(puntaje_salud>puntaje_cs))
+        char *clave;
+        clave = (char*) malloc(sizeof(char)*1024);
+        strcpy(clave,"cienciaSociales");
+        list *j = searchMap(mapVocacional,clave);
+        datos_vocacional *puntero = list_first(j);
+        while(puntero != NULL)
         {
-                char *clave;
-                clave = (char*) malloc(sizeof(char)*1024);
-                strcpy(clave,"salud");
-                list *j = searchMap(mapVocacional,clave);
-                datos_vocacional *puntero = list_first(j);
-                while(puntero != NULL)
-                {
-                    if(strcmp(clave,puntero->area_carrera)==0)
-                    {
-                        printf("%s\n",puntero->carrera);
-                    }
-                    puntero = list_next(j);
-
-                }
-                getch();
-        }
-        else
-        {
-            if((puntaje_artes>puntaje_ingenieria)&&(puntaje_artes>puntaje_salud)&&(puntaje_artes>puntaje_cs))
+            if(strcmp(clave,puntero->area_carrera)==0)
             {
-                    char *clave;
-                    clave = (char*) malloc(sizeof(char)*1024);
-                    strcpy(clave,"artes");
-                    list *j = searchMap(mapVocacional,clave);
-                    datos_vocacional *puntero = list_first(j);
-                    while(puntero != NULL)
-                    {
-                        if(strcmp(clave,puntero->area_carrera)==0)
-                        {
-                            printf("%s\n",puntero->carrera);
-                        }
-                        puntero = list_next(j);
+                printf("%s\n",puntero->carrera);
+            }
+            puntero = list_next(j);
 
-                    }
-            }
-            else
-            {
-                if((puntaje_cs>puntaje_ingenieria)&&(puntaje_cs>puntaje_salud)&&(puntaje_cs>puntaje_artes))
-                {
-                    char *clave;
-                    clave = (char*) malloc(sizeof(char)*1024);
-                    strcpy(clave,"cienciaSociales");
-                    list *j = searchMap(mapVocacional,clave);
-                    datos_vocacional *puntero = list_first(j);
-                    while(puntero != NULL)
-                    {
-                        if(strcmp(clave,puntero->area_carrera)==0)
-                        {
-                            printf("%s\n",puntero->carrera);
-                        }
-                        puntero = list_next(j);
-                    }
-                    getch();
-                }
-            }
         }
     }
+    if((puntaje_ingenieria == 0)&&(puntaje_artes == 0)&&(puntaje_cs == 0)&&(puntaje_salud == 0))
+    {
+        printf("aqui hay que porner algo que es cuando pone que no en todo");
+    }
+    getch();
+
+    printf("\n\n  ------------------------------------------------------------------------------------------------ \n");
+    printf(" |                                                                                                |\n");
+    printf(" |  Si despues de hacer este test vocacional todavia no puedes definir tu carrera universitaria,  |\n");
+    printf(" |  todavia puedes agotar otros recursos. En primer lugar, puedes hacer una consulta profesional  |\n");
+    printf(" |  con un especialista en Psicologia que pueda orientarte. Otra herramienta es solo ¡pensar y    |\n");
+    printf(" |  jugar un poco! Porque si bien no sabes que te gustaria hacer, sabes exactamente lo que no te  |\n");
+    printf(" |  gustaria. Hacer una gran lista con esta informacion puede resultar esclarecedor al final.     |\n");
+    printf(" |  Al mismo tiempo, puedes hacer una lista de tus hobbies preferidos… Y seguir investigando      |\n");
+    printf(" |  hasta encontrar lo que te interesa!                                                           |\n");
+    printf(" |                                                                                                |\n");
+    printf("  ------------------------------------------------------------------------------------------------ ");
+    printf("\n\n Presione cualquier tecla para volver al menu");
+    getch();
+
 }
 
 void test_ansiedad(list *ListAnsiedad)
