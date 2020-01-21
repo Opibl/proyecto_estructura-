@@ -4,7 +4,11 @@
 #include "list.h"
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 
+/*
+    estructura usada para los test de depresion , ansiedad e inteligencia emocional
+*/
 typedef struct
 {
     char *pregunta;
@@ -12,6 +16,9 @@ typedef struct
 
 }datos_test;
 
+/*
+    estructuras usadas para el test vocacional
+*/
 typedef struct
 {
     char *pregunta_vocacional;
@@ -28,14 +35,9 @@ typedef struct
 
 }datos_vocacional;
 
-/*typedef struct
-{
-    int min, int max //rango para determinar el resultado.
-    char* descripción_resultado //mensaje final del test para complementar con el resultado
-
-}DescripciónDeResultado;
+/*
+    funcion que separa por comas
 */
-
 char *get_csv_field (char * tmp, int i)
 {
     char * line = _strdup (tmp);
@@ -58,7 +60,9 @@ char * _strdup (const char *s) {
     return (char *) memcpy (new, s, len);
 }
 
-
+/*
+    funcion hash
+*/
 long long stringHash(const void * key) {
     long long hash = 5381;
 
@@ -78,6 +82,9 @@ int stringEqual(const void * key1, const void * key2) {
     return strcmp(A, B) == 0;
 }
 
+/*
+    funcion para crear las preguntas del test vocacional , ansiedad e inteligenciia emocional
+*/
 datos_test *crear_pregunta(char *preguntaR,char *punto)
 {
     datos_test *nueva_pregunta = malloc(sizeof(datos_test));
@@ -86,7 +93,9 @@ datos_test *crear_pregunta(char *preguntaR,char *punto)
     return nueva_pregunta;
 
 }
-
+/*
+    funcion para crear la pregunta del test vocacional
+*/
 datos_pregunta_vocacional *crear_pregunta_vocacional(char *preguntaR,char *areaR)
 {
     datos_pregunta_vocacional *nueva_pregunta = malloc(sizeof(datos_pregunta_vocacional));
@@ -94,7 +103,9 @@ datos_pregunta_vocacional *crear_pregunta_vocacional(char *preguntaR,char *areaR
     nueva_pregunta->area=areaR;
     return nueva_pregunta;
 }
-
+/*
+    funcion para crear los datos del test vocacional
+*/
 datos_vocacional *crear_vocacional(char *carreraR,char *area_carreraR)
 {
     datos_vocacional *nueva_pregunta = malloc(sizeof(datos_vocacional));
@@ -102,6 +113,8 @@ datos_vocacional *crear_vocacional(char *carreraR,char *area_carreraR)
     nueva_pregunta->area_carrera=area_carreraR;
     return nueva_pregunta;
 }
+
+// funcion que contiene el test vocacional
 
 void test_vocacional(Map *mapVocacional,list *listVocacional)
 {
@@ -111,6 +124,7 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
     char *carreraR;
     char *areaR;
     char *area_carreraR;
+    bool aux2 = true;
 
     list *lista_carreras = list_create_empty();
 
@@ -208,13 +222,14 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
 
         datoR = list_next(listVocacional);
     }
-    printf("%d ",puntaje_artes);
-    printf("%d ",puntaje_ingenieria);
-    printf("%d ",puntaje_salud);
-    printf("%d \n",puntaje_cs);
-
-
-
+    if((puntaje_ingenieria == 0)&&(puntaje_artes == 0)&&(puntaje_cs == 0)&&(puntaje_salud == 0))
+    {
+        printf(" \nCreemos que no contestaste correctamente al test, por favor, intente el test nuevamente");
+        aux2 = false;
+    }
+    if (aux2 == true)
+    {
+    printf(" \n Estas podrian ser las carreras universitarias que te podrian interesar:\n\n");
     if((puntaje_ingenieria>=puntaje_salud)&&(puntaje_ingenieria>=puntaje_artes)&&(puntaje_ingenieria>=puntaje_cs)&&(puntaje_ingenieria!=0))
     {
         char *clave;
@@ -244,7 +259,7 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
         {
             if(strcmp(clave,puntero->area_carrera)==0)
             {
-                printf("%s\n",puntero->carrera);
+                printf(" -%s\n",puntero->carrera);
             }
             puntero = list_next(j);
         }
@@ -261,7 +276,7 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
         {
             if(strcmp(clave,puntero->area_carrera)==0)
             {
-                printf("%s\n",puntero->carrera);
+                printf(" -%s\n",puntero->carrera);
             }
             puntero = list_next(j);
 
@@ -279,18 +294,12 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
         {
             if(strcmp(clave,puntero->area_carrera)==0)
             {
-                printf("%s\n",puntero->carrera);
+                printf(" -%s\n",puntero->carrera);
             }
             puntero = list_next(j);
 
         }
     }
-    if((puntaje_ingenieria == 0)&&(puntaje_artes == 0)&&(puntaje_cs == 0)&&(puntaje_salud == 0))
-    {
-        printf("aqui hay que porner algo que es cuando pone que no en todo");
-    }
-    getch();
-
     printf("\n\n  ------------------------------------------------------------------------------------------------ \n");
     printf(" |                                                                                                |\n");
     printf(" |  Si despues de hacer este test vocacional todavia no puedes definir tu carrera universitaria,  |\n");
@@ -298,14 +307,17 @@ void test_vocacional(Map *mapVocacional,list *listVocacional)
     printf(" |  con un especialista en Psicologia que pueda orientarte. Otra herramienta es solo ¡pensar y    |\n");
     printf(" |  jugar un poco! Porque si bien no sabes que te gustaria hacer, sabes exactamente lo que no te  |\n");
     printf(" |  gustaria. Hacer una gran lista con esta informacion puede resultar esclarecedor al final.     |\n");
-    printf(" |  Al mismo tiempo, puedes hacer una lista de tus hobbies preferidos… Y seguir investigando      |\n");
+    printf(" |  Al mismo tiempo, puedes hacer una lista de tus hobbies preferidos y seguir investigando       |\n");
     printf(" |  hasta encontrar lo que te interesa!                                                           |\n");
     printf(" |                                                                                                |\n");
     printf("  ------------------------------------------------------------------------------------------------ ");
     printf("\n\n Presione cualquier tecla para volver al menu");
-    getch();
 
+    }
+    getch();
 }
+
+//funcion que contiene el test de ansiedad
 
 void test_ansiedad(list *ListAnsiedad)
 {
@@ -429,6 +441,7 @@ void test_ansiedad(list *ListAnsiedad)
     }
 }
 
+//funcion que contiene el test de inteligencia emocional
 
 void test_inteligencia(list *ListInteligenciaEmocional)
 
@@ -554,6 +567,8 @@ void test_inteligencia(list *ListInteligenciaEmocional)
 
     }
 }
+
+// funcion que contiene el test de depresion
 
 void test_depresion(list *ListDepresion)
 {

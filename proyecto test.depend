@@ -31,13 +31,14 @@
 
 1567652630 c:\users\pedro\desktop\proyecto_estructura-\list.h
 
-1579561985 source:c:\users\pedro\desktop\proyecto_estructura-\main.c
+1579566540 source:c:\users\pedro\desktop\proyecto_estructura-\main.c
 	<stdio.h>
 	<stdlib.h>
 	"Map.h"
 	"list.h"
 	<ctype.h>
 	<string.h>
+	<stdbool.h>
 
 1538512728 c:\users\pedro\desktop\proyecto_estructura-\map.h
 
