@@ -1,3 +1,10 @@
+/*
+    Nombre de los integrantes:
+    - Andres Matamala
+    - Jose Toloza
+    - Pedro Basualto
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "Map.h"
